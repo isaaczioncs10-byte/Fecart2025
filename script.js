@@ -57,40 +57,19 @@ function initParticles() {
 }
 
 // Timeline generation
-function generateTimeline() {
-    const timelineItems = [
-        {
-            period: "1950-1990",
-            title: "Início da Era Digital",
-            description: "Alan Turing propõe o famoso Teste de Turing em 1950. Surgem os primeiros computadores eletrônicos como ENIAC e EDVAC. Desenvolvimento dos primeiros algoritmos de busca e sistemas especialistas básicos.",
-            icon: "fas fa-desktop",
-            color: "cyber-blue",
-            side: "left"
-        },
-        {
-            period: "1990-2000",
-            title: "Fundações Modernas",
-            description: "Internet se torna global, surgem as primeiras redes neurais artificiais práticas. Desenvolvimento de algoritmos genéticos e sistemas de reconhecimento de padrões. Era dos primeiros chatbots e assistentes virtuais.",
-            icon: "fas fa-microchip",
-            color: "cyber-green",
-            side: "right"
-        },
-        {
-            period: "2000-2025",
-            title: "Era Moderna",
-            description: "Machine Learning, Deep Learning, GPT, ChatGPT, reconhecimento de imagem e processamento de linguagem natural.",
-            icon: "fas fa-brain",
-            color: "cyber-purple",
-            side: "left"
-        },
-        {
-            period: "2025-2080",
-            title: "O Futuro",
-            description: "AGI, superinteligência, cidades inteligentes, robôs humanoides e colonização espacial assistida por IA.",
-            icon: "fas fa-rocket",
-            color: "cyber-pink",
-            side: "right"
-        }
+async function generateVideo() {
+    const promptInput = document.getElementById('vision-prompt');
+    const durationSelect = document.getElementById('duration');
+    const styleSelect = document.getElementById('style');
+    const generateBtn = document.getElementById('generate-btn');
+    const loadingSection = document.getElementById('loading-animation');
+    const videoResult = document.getElementById('video-result');
+
+    const prompt = promptInput.value.trim();
+    if (!prompt) {
+        alert('Por favor, descreva sua visão do futuro!');
+        return;
+    }
     ];
 
     const container = document.getElementById('timeline-items');
