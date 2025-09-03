@@ -57,19 +57,40 @@ function initParticles() {
 }
 
 // Timeline generation
-async function generateVideo() {
-    const promptInput = document.getElementById('vision-prompt');
-    const durationSelect = document.getElementById('duration');
-    const styleSelect = document.getElementById('style');
-    const generateBtn = document.getElementById('generate-btn');
-    const loadingSection = document.getElementById('loading-animation');
-    const videoResult = document.getElementById('video-result');
-
-    const prompt = promptInput.value.trim();
-    if (!prompt) {
-        alert('Por favor, descreva sua visão do futuro!');
-        return;
-    }
+function generateTimeline() {
+    const timelineItems = [
+        {
+            period: "1950-1990",
+            title: "Início da Era Digital",
+            description: "Alan Turing propõe o famoso Teste de Turing em 1950. Surgem os primeiros computadores eletrônicos como ENIAC e EDVAC. Desenvolvimento dos primeiros algoritmos de busca e sistemas especialistas básicos.",
+            icon: "fas fa-desktop",
+            color: "cyber-blue",
+            side: "left"
+        },
+        {
+            period: "1990-2000",
+            title: "Fundações Modernas",
+            description: "Internet se torna global, surgem as primeiras redes neurais artificiais práticas. Desenvolvimento de algoritmos genéticos e sistemas de reconhecimento de padrões. Era dos primeiros chatbots e assistentes virtuais.",
+            icon: "fas fa-microchip",
+            color: "cyber-green",
+            side: "right"
+        },
+        {
+            period: "2000-2025",
+            title: "Era Moderna",
+            description: "Machine Learning, Deep Learning, GPT, ChatGPT, reconhecimento de imagem e processamento de linguagem natural.",
+            icon: "fas fa-brain",
+            color: "cyber-purple",
+            side: "left"
+        },
+        {
+            period: "2025-2080",
+            title: "O Futuro",
+            description: "AGI, superinteligência, cidades inteligentes, robôs humanoides e colonização espacial assistida por IA.",
+            icon: "fas fa-rocket",
+            color: "cyber-pink",
+            side: "right"
+        }
     ];
 
     const container = document.getElementById('timeline-items');
@@ -209,68 +230,60 @@ async function generateVideo() {
     const videoResult = document.getElementById('video-result');
 
     const prompt = promptInput.value.trim();
+    
     if (!prompt) {
         alert('Por favor, descreva sua visão do futuro!');
         return;
     }
 
-    // Mostrar carregamento
+    // Show loading animation
     generateBtn.disabled = true;
     generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Gerando...';
     loadingSection.classList.remove('hidden');
     videoResult.classList.add('hidden');
 
     try {
-        // Chamada real para a API do VideoGen
-        const response = await fetch("https://api.videogen.io/v1/videos", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer SUA_CHAVE_API_AQUI" // substitua pela sua chave da VideoGen
-            },
-            body: JSON.stringify({
-                prompt: prompt,
-                duration: parseInt(durationSelect.value),
-                style: styleSelect.value,
-                resolution: "720p"
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error("Erro ao gerar vídeo: " + response.statusText);
-        }
-
-        const data = await response.json();
-
-        // O retorno deve conter a URL do vídeo
-        const videoUrl = data.url || data.videoUrl;
+        // Simulate video generation process
+        await simulateVideoGeneration();
+        
+        // Generate video data
         const videoData = {
             id: Date.now().toString(),
-            title: "Visão Futurística",
+            title: await generateVideoTitle(prompt),
             description: prompt,
             duration: parseInt(durationSelect.value),
             style: styleSelect.value,
-            videoUrl: videoUrl,
-            thumbnailUrl: "", // se a API retornar thumbnail, use aqui
+            videoUrl: getRandomVideoUrl(),
+            thumbnailUrl: getRandomThumbnailUrl(),
             createdAt: new Date(),
             likes: 0
         };
 
+        // Add to gallery
         galleryVideos.unshift(videoData);
         videosGenerated++;
-
+        
+        // Update displays
         updateStats();
         loadGallery();
         showVideoResult(videoData);
 
     } catch (error) {
-        console.error('Erro ao gerar vídeo:', error);
-        alert('Erro ao gerar vídeo. Verifique sua chave API.');
+        console.error('Error generating video:', error);
+        alert('Erro ao gerar vídeo. Tente novamente.');
     } finally {
+        // Reset UI
         generateBtn.disabled = false;
         generateBtn.innerHTML = '<i class="fas fa-magic"></i>Gerar Vídeo do Futuro';
         loadingSection.classList.add('hidden');
     }
+}
+
+// Simulate video generation delay
+function simulateVideoGeneration() {
+    return new Promise(resolve => {
+        setTimeout(resolve, 3000); // 3 seconds simulation
+    });
 }
 
 // Generate creative title
