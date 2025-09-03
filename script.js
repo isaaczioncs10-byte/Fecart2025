@@ -209,60 +209,68 @@ async function generateVideo() {
     const videoResult = document.getElementById('video-result');
 
     const prompt = promptInput.value.trim();
-    
     if (!prompt) {
         alert('Por favor, descreva sua visão do futuro!');
         return;
     }
 
-    // Show loading animation
+    // Mostrar carregamento
     generateBtn.disabled = true;
     generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Gerando...';
     loadingSection.classList.remove('hidden');
     videoResult.classList.add('hidden');
 
     try {
-        // Simulate video generation process
-        await simulateVideoGeneration();
-        
-        // Generate video data
+        // Chamada real para a API do VideoGen
+        const response = await fetch("https://api.videogen.io/v1/videos", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer SUA_CHAVE_API_AQUI" // substitua pela sua chave da VideoGen
+            },
+            body: JSON.stringify({
+                prompt: prompt,
+                duration: parseInt(durationSelect.value),
+                style: styleSelect.value,
+                resolution: "720p"
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Erro ao gerar vídeo: " + response.statusText);
+        }
+
+        const data = await response.json();
+
+        // O retorno deve conter a URL do vídeo
+        const videoUrl = data.url || data.videoUrl;
         const videoData = {
             id: Date.now().toString(),
-            title: await generateVideoTitle(prompt),
+            title: "Visão Futurística",
             description: prompt,
             duration: parseInt(durationSelect.value),
             style: styleSelect.value,
-            videoUrl: getRandomVideoUrl(),
-            thumbnailUrl: getRandomThumbnailUrl(),
+            videoUrl: videoUrl,
+            thumbnailUrl: "", // se a API retornar thumbnail, use aqui
             createdAt: new Date(),
             likes: 0
         };
 
-        // Add to gallery
         galleryVideos.unshift(videoData);
         videosGenerated++;
-        
-        // Update displays
+
         updateStats();
         loadGallery();
         showVideoResult(videoData);
 
     } catch (error) {
-        console.error('Error generating video:', error);
-        alert('Erro ao gerar vídeo. Tente novamente.');
+        console.error('Erro ao gerar vídeo:', error);
+        alert('Erro ao gerar vídeo. Verifique sua chave API.');
     } finally {
-        // Reset UI
         generateBtn.disabled = false;
         generateBtn.innerHTML = '<i class="fas fa-magic"></i>Gerar Vídeo do Futuro';
         loadingSection.classList.add('hidden');
     }
-}
-
-// Simulate video generation delay
-function simulateVideoGeneration() {
-    return new Promise(resolve => {
-        setTimeout(resolve, 3000); // 3 seconds simulation
-    });
 }
 
 // Generate creative title
